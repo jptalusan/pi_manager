@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="{{ url_for('static', filename='script.js') }}"></script>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<!-- {% for i in range(5) %}
+    {{i}}
+{% endfor %} -->
+<!-- {{latest_records}}
+
+<ul>
+{% for record in latest_records %}
+    <li>{{ latest_records[record].network.eth0.ip_address }}
+{% endfor %}
+</ul> -->
+
+<div style="text-align:center">
+  <h2>Pi Manager</h2>
+  <p>Click on the boxes below:</p>
+  <p>Latest upload time: {{ timestamp }}</p>
+  <a href="http://163.221.68.206:8888/sources/0/dashboards/1" target="_blank">Link to Dashboard</a>
+</div>
+
+
+<div class="row">
+{% for record in latest_records %}
+
+    {% if loop.index % 3 == 0 %}
+
+    {% endif %}
+          <div class="column" onclick="openTab('b{{ loop.index }}');" style="background: {{ ['green', 'blue', 'red', 'Olive', 'orange', 'purple'] | random }};">
+            <h2>{{ host_list[loop.index - 1] }}</h2>
+            <h5>{{ latest_records[host_list[loop.index - 1]].network.eth0.ip_address }}</h5>
+          </div>
+    {% if loop.index % 3 == 0 %}
+        </div>
+        <div class="row">
+    {% endif %}
+
+{% endfor %}
+</div>
+
+{% set count = 1 %}
+{% for record in latest_records %}
+    <div id="b{{ loop.index }}" class="containerTab" style="display:none;background:{{ ['green', 'blue', 'red', 'Olive', 'orange', 'purple'] | random }}">
+      <span onclick="this.parentElement.style.display='none'" class="closebtn">x</span>
+      {% set count = count + 1 %}
+      {% set ip = latest_records[host_list[loop.index - 1]].network.eth0.ip_address %}
+      <h2>{{ host_list[loop.index - 1] }}</h2>
+     <!--  <p>{{ latest_records[host_list[loop.index - 1]] }}</p> -->
+      <ul>
+        <li>Eth0: {{ latest_records[host_list[loop.index - 1]].network.eth0.ip_address }}, {{ latest_records[host_list[loop.index - 1]].network.eth0.nic_speed }}</li>
+        <li>Wlan0: {{ latest_records[host_list[loop.index - 1]].network.wlan0.ip_address }}, {{ latest_records[host_list[loop.index - 1]].network.wlan0.nic_speed }} </li>
+        <li>Disk Usage: {{ latest_records[host_list[loop.index - 1]].disk_usage }} </li>
+        <li>CPU Usage: {{ latest_records[host_list[loop.index - 1]].cpu_usage }} </li>
+        <li>Tasks: {{ latest_records[host_list[loop.index - 1]].tasks }} </li>
+        <li>Virtual Memory: {{ latest_records[host_list[loop.index - 1]].virtual_memory }} </li>
+        <a href="http://163.221.68.206:8888/sources/0/dashboards/1" target="_blank">Link to Dashboard</a>
+      </ul>
+
+      {% if ip == '163.221.68.242' %}
+      Special Links
+      <ul>
+        <li><a href="http://{{ip}}:8080" target="_blank">Docker Visualizer</a></li>
+        <li><a href="http://{{ip}}:8081/classify?f1=1&f2=1&f3=1&f4=1" target="_blank">Backend sample</a></li>
+        <li><a href="http://{{ip}}:9181" target="_blank">Redis Dashboard</a></li>
+        <li><a href="http://{{ip}}" target="_blank">Front end</a></li>
+        <li><a href="http://{{ip}}/long_request" target="_blank">Long request for worker</a></li>
+      </ul>
+      {% elif ip == '163.221.68.237' %}
+      Special Links
+      <ul>
+        <li><a href="http://{{ip}}:5000" target="_blank">Recorder</a></li>
+      </ul>
+      {% elif ip == '163.221.68.211' %}
+      Special Links
+      <ul>
+        <li><a href="http://{{ip}}:5000/manager" target="_blank">Pi Manager</a></li>
+      </ul>
+      {% endif %}
+      <h4>Last updated: {{ latest_records[host_list[loop.index - 1]].timestamp }}
+    </div>
+{% endfor %}
+
+</body>
+</html>
